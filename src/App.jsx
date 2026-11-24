@@ -7,6 +7,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import CartPage from "./pages/CartPage";
 import WishlistPage from "./pages/WishlistPage";
 import NotFoundPage from "./pages/NotFoundPage";
+
 const App = () => {
   return (
     <Routes>
