@@ -1,14 +1,16 @@
-import { Heart, Menu, Moon, Search, ShoppingBag, X } from "lucide-react";
+import { Heart, Menu, Moon, Search, ShoppingBag, Sun, X } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
+import { useStore } from "../context/StoreContext";
+
+const navClass = ({ isActive }) =>
+  `text-sm font-semibold transition ${isActive ? "text-indigo-600" : "text-slate-600 hover:text-indigo-600 dark:text-slate-300"}`;
 
 const Header = () => {
+  const { cartCount, wishlist, theme, dispatch } = useStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-
-  const navClass = ({ isActive }) =>
-    `text-sm font-semibold transition ${isActive ? "text-indigo-600" : "text-slate-600 hover:text-indigo-600 dark:text-slate-300"}`;
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -60,9 +62,10 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <button
             aria-label="Toggle theme"
-            className="btn-secondary rounded-full p-2.5"
+            onClick={() => dispatch({ type: "TOGGLE_THEME" })}
+            className="btn-secondary rounded-full! p-2.5!"
           >
-            <Moon size={18} />
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           <Link
             aria-label="Wishlist"
@@ -70,9 +73,11 @@ const Header = () => {
             className="relative rounded-full p-2.5 text-slate-600 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <Heart size={20} />
-            <span className="absolute right-0 top-0 gird min-w-4 place-items-center rounded-full bg-pink-500 px-1 text-[10px] font-bold text-white">
-              0
-            </span>
+            {wishlist.length > 0 && (
+              <span className="absolute right-0 top-0 gird min-w-4 place-items-center rounded-full bg-pink-500 px-1 text-[10px] font-bold text-white">
+                {wishlist.length}
+              </span>
+            )}
           </Link>
           <Link
             aria-label="Shopping cart"
@@ -80,9 +85,11 @@ const Header = () => {
             className="relative rounded-full p-2.5 text-slate-600 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <ShoppingBag size={20} />{" "}
-            <span className="absolute right-0 top-0 grid h-4 min-w-4 place-items-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white">
-              0
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute right-0 top-0 grid h-4 min-w-4 place-items-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white">
+                {cartCount}
+              </span>
+            )}
           </Link>
           <button
             aria-label="Toggle navigation"

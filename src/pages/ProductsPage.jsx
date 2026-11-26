@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { getProducts } from "../services/productService";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { ProductSkeleton } from "../components/Loading";
 import ProductCard from "../components/ProductCard";
 

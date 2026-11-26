@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { getProductById } from "../services/productService";
+import { useStore } from "../context/StoreContext";
 import Loading from "../components/Loading";
 import {
   ArrowLeft,
   Heart,
-  MinusCircle,
+  Minus,
   Plus,
   ShieldCheck,
   ShoppingCart,
@@ -20,6 +21,7 @@ const ProductDetailsPage = () => {
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const { dispatch, wishlist } = useStore();
 
   useEffect(() => {
     setLoading(true);
@@ -49,6 +51,7 @@ const ProductDetailsPage = () => {
     );
 
   const images = product.images?.length ? product.images : [product.thumbnail];
+  const isSaved = wishlist.some((item) => item.id === product.id);
 
   return (
     <div className="page-container py-10">
@@ -130,7 +133,7 @@ const ProductDetailsPage = () => {
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 className="p-3"
               >
-                <MinusCircle size={16} />
+                <Minus size={16} />
               </button>
               <span className="min-w-10 text-center text-sm font-bold">
                 {quantity}
@@ -147,15 +150,19 @@ const ProductDetailsPage = () => {
             </div>
             <button
               disabled={product.stock <= 0}
+              onClick={() =>
+                dispatch({ type: "ADD_TO_CART", product, quantity })
+              }
               className="btn-primary flex-1"
             >
               <ShoppingCart size={18} /> Add to cart
             </button>
             <button
               aria-label="Toggle wishlist"
-              className={`btn-secondary p-3!`}
+              onClick={() => dispatch({ type: "TOGGLE_WISHLIST", product })}
+              className={`btn-secondary !p-3 ${isSaved ? "!text-pink-500" : ""}`}
             >
-              <Heart size={19} fill="currentColor" />
+              <Heart size={19} fill={isSaved ? "currentColor" : "none"} />
             </button>
           </div>
           <div className="mt-8 grid gap-4 border-t border-slate-200 pt-6 dark:border-slate-800 sm:grid-cols-2">

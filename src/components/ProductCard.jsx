@@ -1,8 +1,13 @@
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { Link } from "react-router";
+import { useStore } from "../context/StoreContext";
+
+const money = (value) => `$${Number(value).toFixed(2)}`;
 
 const ProductCard = ({ product }) => {
-  const money = (value) => `$${Number(value).toFixed(2)}`;
+  const { dispatch, wishlist } = useStore();
+  const isSaved = wishlist.some((item) => item.id === product.id);
+
   return (
     <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-soft dark:border-slate-800 dark:bg-slate-900">
       <div className="relative aspect-4/3 overflow-hidden bg-slate-100 p-5 dark:bg-slate-800">
@@ -23,10 +28,11 @@ const ProductCard = ({ product }) => {
           </span>
         )}
         <button
-          aria-label="Add to wishlist"
-          className={`absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white shadow-sm transition text-slate-500 hover:text-pink-500`}
+          aria-label={isSaved ? "Remove from wishlist" : "Add to wishlist"}
+          onClick={() => dispatch({ type: "TOGGLE_WISHLIST", product })}
+          className={`absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white shadow-sm transition ${isSaved ? "text-pink-500" : "text-slate-500 hover:text-pink-500"}`}
         >
-          <Heart size={17} fill="currentColor" />
+          <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
         </button>
       </div>
       <div className="p-4">
@@ -49,6 +55,7 @@ const ProductCard = ({ product }) => {
           </div>
           <button
             aria-label="Add to cart"
+            onClick={() => dispatch({ type: "ADD_TO_CART", product })}
             className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-50 text-indigo-700 transition hover:bg-indigo-600 hover:text-white dark:bg-indigo-950 dark:text-indigo-300"
           >
             <ShoppingCart size={18} />
