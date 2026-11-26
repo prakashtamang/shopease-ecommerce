@@ -94,7 +94,7 @@ const Header = () => {
           <button
             aria-label="Toggle navigation"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="btn-secondary rounded-full p-2..5 md:hidden"
+            className="btn-secondary rounded-full p-2.5 md:hidden"
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>

@@ -8,14 +8,14 @@ import {
 
 const StoreContext = createContext(null);
 
-const readStorage = (key, fallback) => {
+function readStorage(key, fallback) {
   try {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : fallback;
   } catch {
     return fallback;
   }
-};
+}
 
 const initialState = {
   cart: readStorage("shopease-cart", []),
@@ -23,7 +23,7 @@ const initialState = {
   theme: readStorage("shopease-theme", "light"),
 };
 
-const reducer = (state, action) => {
+function reducer(state, action) {
   switch (action.type) {
     case "ADD_TO_CART": {
       const existing = state.cart.find((item) => item.id === action.product.id);
@@ -39,14 +39,11 @@ const reducer = (state, action) => {
           ];
       return { ...state, cart };
     }
-
-    case "REMOVE_FROM_CART": {
+    case "REMOVE_FROM_CART":
       return {
         ...state,
         cart: state.cart.filter((item) => item.id !== action.id),
       };
-    }
-
     case "SET_QUANTITY":
       return {
         ...state,
@@ -56,10 +53,8 @@ const reducer = (state, action) => {
             : item,
         ),
       };
-
     case "CLEAR_CART":
       return { ...state, cart: [] };
-
     case "TOGGLE_WISHLIST": {
       const exists = state.wishlist.some(
         (item) => item.id === action.product.id,
@@ -71,19 +66,14 @@ const reducer = (state, action) => {
           : [...state.wishlist, action.product],
       };
     }
-
     case "TOGGLE_THEME":
-      return {
-        ...state,
-        theme: state.theme === "light" ? "dark" : "light",
-      };
-
+      return { ...state, theme: state.theme === "light" ? "dark" : "light" };
     default:
       return state;
   }
-};
+}
 
-export const StoreProvider = ({ children }) => {
+export function StoreProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -96,6 +86,7 @@ export const StoreProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("shopease-theme", JSON.stringify(state.theme));
+    document.documentElement.classList.toggle("dark", state.theme === "dark");
   }, [state.theme]);
 
   const cartCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -112,10 +103,10 @@ export const StoreProvider = ({ children }) => {
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
   );
-};
+}
 
-export const useStore = () => {
+export function useStore() {
   const context = useContext(StoreContext);
   if (!context) throw new Error("useStore must be used inside StoreProvider");
   return context;
-};
+}
